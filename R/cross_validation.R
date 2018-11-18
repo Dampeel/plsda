@@ -4,10 +4,8 @@
 #' @param Y (The Y)
 #' @param ncomp (The number of component to be used)
 #' @keywords fit, pls, plsda
+#' @export
 cross_validation <- function(X, Y, ncomp) {
-  
-  # Call to pls package
-  library(pls)
   
   R2_mean <- NULL
   for (n in 1:ncomp) {
@@ -21,8 +19,7 @@ cross_validation <- function(X, Y, ncomp) {
       Ytest <- Y[i,,drop=FALSE]
       
       model <- pls::plsr(Yapp ~ Xapp, ncomp = n)
-      prediction <- pls::predict(model, newdata=Xtest)[,,n] #on récupère le résultat de la dernière composante
-      
+      prediction <- predict.plsda(model, Xtest, n)
       R2[i] <- sum((prediction-Ytest)^2)
     }
     
