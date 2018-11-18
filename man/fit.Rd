@@ -4,10 +4,16 @@
 \alias{fit}
 \title{Fonction fit}
 \usage{
-fit(par = "PLSDA")
+fit(data, modality = 1, ncomp = 2, cv = TRUE)
 }
 \arguments{
-\item{par}{(par defaut, "toi")}
+\item{data}{(The dataset to analyse)}
+
+\item{modality}{(The column to fit)}
+
+\item{ncomp}{(The number of components)}
+
+\item{cv}{(If the package should compute the ncomp with a cross validation)}
 }
 \description{
 Fonction fit

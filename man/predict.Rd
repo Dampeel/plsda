@@ -4,7 +4,12 @@
 \alias{predict}
 \title{Fonction predict}
 \usage{
-predict()
+predict(model, newdata)
+}
+\arguments{
+\item{model}{(The model to use)}
+
+\item{newdata}{(The test data)}
 }
 \description{
 Fonction predict
