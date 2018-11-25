@@ -6,25 +6,26 @@
 #' @keywords fit, pls, plsda
 #' @export
 cross_validation <- function(X, Y, ncomp) {
-  
+
   R2_mean <- NULL
-  for (n in 1:ncomp) {
-    
+  for (n in 2:ncomp) {
+
     # Leave one out
     R2 <- NULL
     for (i in 1:nrow(X)) {
-      Xapp <- X[-i,,drop=FALSE]
-      Yapp <- Y[-i,,drop=FALSE]
-      Xtest <- X[i,,drop=FALSE]
-      Ytest <- Y[i,,drop=FALSE]
-      
-      model <- pls::plsr(Yapp ~ Xapp, ncomp = n)
+      Xapp <- as.matrix(X[-i,,drop=FALSE])
+      Yapp <- as.matrix(Y[-i,,drop=FALSE])
+      Xtest <- as.matrix(X[i,,drop=FALSE])
+      Ytest <- as.matrix(Y[i,,drop=FALSE])
+
+      model <- pls(Xapp, Yapp, n)
       prediction <- predict.plsda(model, Xtest, n)
-      R2[i] <- sum((prediction-Ytest)^2)
+      R2[i] <- sum((prediction$Y - Ytest)^2)
     }
-    
+
     R2_mean[n] <- mean(R2)
   }
-  
+
+  print(which.min(R2_mean))
   return(which.min(R2_mean))
 }
