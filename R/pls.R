@@ -3,13 +3,19 @@ pls <- function(X, Y, ncomp = 2) {
   n = nrow(X)
   p = ncol(X)
   q = ncol(Y)
-  # =======================================================
-  # prepare ingredients
-  # =======================================================
-  # scaling
-  X.old = scale(X)
-  Y.old = scale(Y)
-  # initialize
+
+  # Scaling data
+  # TODO: gérer le scaling en fonction de la PLS de Camille
+
+  X.means <- apply(X, 2, mean)
+  X.sds <- apply(X, 2, sd)
+  X.old <- t(apply(X, 1, scale.plsda, X.means, X.sds))
+
+  Y.means <- apply(Y, 2, mean)
+  Y.sds <- apply(Y, 2, sd)
+  Y.old <- t(apply(Y, 1, scale.plsda, Y.means, Y.sds))
+
+  # Initializing
   Wh = matrix(0, p, ncomp)
   Uh = matrix(0, n, ncomp)
   Th = matrix(0, n, ncomp)
@@ -127,5 +133,9 @@ pls <- function(X, Y, ncomp = 2) {
     y.pred = Y.hat,
     resid = resids,
     expvar = EV,
-    VIP = VIP)
+    VIP = VIP,
+    X.means = X.means,
+    X.sds = X.sds,
+    Y.means = Y.means,
+    Y.sds = Y.sds)
 }

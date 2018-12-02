@@ -8,21 +8,26 @@
 #' @export
 #' @examples
 #' fit("test")
-fit <- function(formula, data, ncomp=2, cv=TRUE) {
+fit <- function(formula, data, ncomp=2, cv = FALSE, nfold = 0) {
 
   #Reading the formula and setting X and Y
   if (!plyr::is.formula(formula)) {
     stop("formula must be a valid R formula")
   }
 
-  y <- model.response(model.frame(formula, data))
+  # Reading the X
   X <- model.matrix(update(formula, ~ . -1), data = data)
+  # TODO: transformer les factor éventuels en indicatrices
 
+  # Reading the Y
+  y <- model.response(model.frame(formula, data))
   if(is.factor(y)) {
     Y <- as.matrix(data.frame(model.matrix( ~ y - 1, data=data)))
   } else {
     stop("y must be a factor")
   }
+
+  print(Y)
 
   #Controling data
   if (any(is.na(X)) || any(is.na(Y))) {
@@ -42,18 +47,20 @@ fit <- function(formula, data, ncomp=2, cv=TRUE) {
     stop("ncomp must be >1 and <n")
   }
 
-  #Scaling X data
-  X <- scale(X)
+  if (nfold > nrow(X)) {
+    stop("nfold must not be > to number of rows in X")
+  }
 
+  # Launching PLS algorithm
   if (cv) {
-    n <- cross_validation(X, Y, ncomp)
+    n <- cross_validation(X, Y, ncomp, nfold)
   }
   else {
     n <- ncomp
   }
 
   # Call to pls function
-  model <- pls(X, Y)
+  model <- pls(X, Y, n)
 
   return(model)
 }
