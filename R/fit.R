@@ -27,8 +27,6 @@ fit <- function(formula, data, ncomp=2, cv = FALSE, nfold = 0) {
     stop("y must be a factor")
   }
 
-  print(Y)
-
   #Controling data
   if (any(is.na(X)) || any(is.na(Y))) {
     stop("X and Y cannot contain null values")
