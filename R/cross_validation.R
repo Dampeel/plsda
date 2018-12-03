@@ -10,9 +10,7 @@ cross_validation <- function(X, Y, ncomp, nfold) {
 
   PRESS_mean <- NULL
 
-  # TODO: vérifier si on peut faire avec moins de 2 composantes
-
-  for (n in 2:ncomp) {
+  for (n in 1:ncomp) {
     PRESS <- NULL
 
     # Leave one out
@@ -38,16 +36,17 @@ cross_validation <- function(X, Y, ncomp, nfold) {
       Xtest <- as.matrix(X[indexes,, drop=FALSE])
       Ytest <- as.matrix(Y[indexes,, drop=FALSE])
 
-      print(nrow(Xapp))
-      print(nrow(Xtest))
       model <- pls(Xapp, Yapp, n)
-
       prediction <- predict.plsda(model, Xtest)
-      PRESS[i] <- sum((prediction$Y - Ytest)^2)
+
+      PRESS[i] <- sum((prediction$Y.hat - Ytest)^2)
     }
 
     PRESS_mean[n] <- mean(PRESS)
   }
 
-  return(which.min(PRESS_mean))
+  ncomp <- which.min(PRESS_mean)
+
+  return(list(N.Comp = ncomp,
+              PRESS = PRESS_mean))
 }

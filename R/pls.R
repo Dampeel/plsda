@@ -67,9 +67,6 @@ pls <- function(X, Y, nc) {
   #Matrice finale des coefficients
   coeffs=rbind(Constante=Cte,Br)
 
-  #Residus
-  residus=Y.init-Y.pred1
-
   #Détail du R² et redondance
   #Pour X (non cumulé et cumulé)
   R2x=cor(X.init,Th)^2
@@ -89,15 +86,7 @@ pls <- function(X, Y, nc) {
   qualite=rbind(Var.Expliquee.X.Cum[nrow(Var.Expliquee.X.Cum),], Var.Expliquee.Y.Cum[nrow(Var.Expliquee.Y.Cum),])
   rownames(qualite)=c("R²Xcum","R²Ycum")
 
-  #Représentation graphique de la qualité
-  barplot(qualite,
-          beside=TRUE,
-          main="Qualité du modèle par nombre de composantes",
-          xlab="Composantes",
-          ylab="Indice",
-          col=c("orange","green4"),
-          space=c(0.05,0.2),
-          legend=rownames(qualite))
+  #TODO: Sortir le plot dans le fit
 
   #Variable Importance in the Projection (VIP)
   Rd=matrix(0,nc,nc)
@@ -108,22 +97,10 @@ pls <- function(X, Y, nc) {
   VIP=sqrt((W^2) %*% Rd %*% diag(px/cumsum(Rdy), nc, nc))
   dimnames(VIP)=list(namesX, paste(rep("VIP Comp",nc),1:nc,sep=" "))
 
-  #Représentation graphique VIP
-  for (h in 1:nc){
-    barplot(VIP[,h],names.arg=namesX,
-            main=c(paste("VIP Composante ",h),"Intervalle de confiance 0.95%"),
-            xlab="Variables",
-            ylab="VIP",
-            col="blue")
-    abline(a=0,b=0,h=0.8,v=0,lty=5)
-    abline(a=0,b=0,h=1,v=0,lty=5)
-  }
+  #TODO: Sortir le plot dans le fit
 
   return(list(Matrice.Comp=Th,
               Coeffs=coeffs,
-              Y.pred=Y.pred,
-              Mat.conf=mc,
-              Residus=residus,
               Var.Expliquee.X=Var.Expliquee.X,
               Var.Expliquee.X.Cum=Var.Expliquee.X.Cum,
               Var.Expliquee.Y=Var.Expliquee.Y,
