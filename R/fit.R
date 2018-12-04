@@ -18,15 +18,19 @@ fit <- function(formula, data, ncomp=2, cv = FALSE, nfold = 0, plot = FALSE) {
 
   # Reading the X
   X <- model.matrix(update(formula, ~ . -1), data = data)
+
   # TODO: transformer les factor éventuels en indicatrices
 
   # Reading the Y
   y <- model.response(model.frame(formula, data))
   if(is.factor(y)) {
-    Y <- as.matrix(data.frame(model.matrix( ~ y - 1, data=data)))
+    Y <- dummies::dummy(y)
+    colnames(Y) <- levels(y) #TODO: vérifier que levels est dans le mêm eordre que dummies
   } else {
     stop("y must be a factor")
   }
+
+  #TOD0 : controller que y a une seule colonne
 
   #Controling data
   if (any(is.na(X)) || any(is.na(Y))) {
@@ -65,9 +69,10 @@ fit <- function(formula, data, ncomp=2, cv = FALSE, nfold = 0, plot = FALSE) {
   }
 
   # Call to pls function
+  # TODO: Iterer pls en enlevant à chaque fois la variable < 0.8
   model <- pls(X, Y, n)
 
-  # Plot
+  # TODO: Faire une fonction plot à part
   if (plot) {
 
     #Représentation graphique de la qualité
@@ -75,7 +80,7 @@ fit <- function(formula, data, ncomp=2, cv = FALSE, nfold = 0, plot = FALSE) {
     barplot(qualite,
             beside=TRUE,
             main="Model quality by #Comp",
-            xlab="Composant",
+            xlab="Component",
             ylab="Quality",
             col=c("orange","green4"),
             space=c(0.05,0.2),
@@ -86,7 +91,7 @@ fit <- function(formula, data, ncomp=2, cv = FALSE, nfold = 0, plot = FALSE) {
     for (h in 1:n){
       barplot(VIP[,h],
               names.arg=colnames(X),
-              main=c(paste("VIP for composant ",h),"Confidence interval at 0.95%"),
+              main=c(paste("VIP for component",h),"Confidence interval at 0.95%"),
               xlab="Variables",
               ylab="VIP",
               col="blue")

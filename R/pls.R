@@ -86,8 +86,6 @@ pls <- function(X, Y, nc) {
   qualite=rbind(Var.Expliquee.X.Cum[nrow(Var.Expliquee.X.Cum),], Var.Expliquee.Y.Cum[nrow(Var.Expliquee.Y.Cum),])
   rownames(qualite)=c("R²Xcum","R²Ycum")
 
-  #TODO: Sortir le plot dans le fit
-
   #Variable Importance in the Projection (VIP)
   Rd=matrix(0,nc,nc)
   Rdy=colMeans(R2y)
@@ -96,8 +94,6 @@ pls <- function(X, Y, nc) {
   }
   VIP=sqrt((W^2) %*% Rd %*% diag(px/cumsum(Rdy), nc, nc))
   dimnames(VIP)=list(namesX, paste(rep("VIP Comp",nc),1:nc,sep=" "))
-
-  #TODO: Sortir le plot dans le fit
 
   return(list(Matrice.Comp=Th,
               Coeffs=coeffs,

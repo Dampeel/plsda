@@ -4,7 +4,7 @@
 \alias{cross_validation}
 \title{Fonction cross_validation}
 \usage{
-cross_validation(X, Y, ncomp)
+cross_validation(X, Y, ncomp, nfold)
 }
 \arguments{
 \item{X}{(The X)}
@@ -12,6 +12,8 @@ cross_validation(X, Y, ncomp)
 \item{Y}{(The Y)}
 
 \item{ncomp}{(The number of component to be used)}
+
+\item{nfold}{(The number of folds to be used for cross-validation. 0 is equivalent to Leave One Out)}
 }
 \description{
 Fonction cross_validation

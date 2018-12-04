@@ -4,14 +4,16 @@
 \alias{fit}
 \title{Fonction fit}
 \usage{
-fit(formula, data, ncomp = 2, cv = TRUE)
+fit(formula, data, ncomp = 2, cv = FALSE, nfold = 0, plot = FALSE)
 }
 \arguments{
 \item{data}{(The dataset to analyse)}
 
 \item{ncomp}{(The number of components)}
 
-\item{cv}{(If the package should compute the ncomp with a cross validation)}
+\item{cv}{(If TRUE the package will compute the ncomp with a cross validation)}
+
+\item{plot}{(If TRUE the package swill display VIP and Quality plots)}
 
 \item{modality}{(The column to fit)}
 }

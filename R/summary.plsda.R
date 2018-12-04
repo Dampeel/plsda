@@ -1,3 +1,3 @@
-summary.plsda <- function() {
-  cat("Package PLSDA\n")
+summary.plsda <- function(model) {
+  print(model)
 }

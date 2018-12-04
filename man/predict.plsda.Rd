@@ -4,14 +4,12 @@
 \alias{predict.plsda}
 \title{Fonction predict}
 \usage{
-\method{predict}{plsda}(model, newdata, n)
+\method{predict}{plsda}(model, X, y.exp = NULL)
 }
 \arguments{
 \item{model}{(The model to use)}
 
 \item{newdata}{(The test data)}
-
-\item{n}{(The number of components)}
 }
 \description{
 Fonction predict

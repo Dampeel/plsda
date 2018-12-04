@@ -17,16 +17,18 @@ predict.plsda <- function(model, X, y.exp = NULL) {
     stop("X must have the same number of columns than model")
   }
 
+  #TODO: tester vérifier que les colonnes du X correspondent bien au colonnes du modele
+
   # Setting data
   coeffs <- model$Coeffs
   X <- as.matrix(X)
   B <- coeffs[-1,]
   Cte <- matrix(rep(coeffs[1,], each=nrow(X)), nrow(X), ncol(B))
 
-  #TODO: insérer le softmax ici pour obtenir les probabilités d'appartenance
-
   # Prediction
   Y.hat <- X %*% B + Cte # sous forme d'indicatrices
+  #TODO: insérer le softmax ici pour obtenir les probabilités d'appartenance
+
   y.hat = colnames(Y.hat)[apply(Y.hat, 1, which.max)] # sous forme de modalités
 
   # In case we have expected Y
