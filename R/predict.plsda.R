@@ -31,7 +31,7 @@ predict.plsda <- function(model, X, y.exp = NULL) {
 
   y.hat = colnames(Y.hat)[apply(Y.hat, 1, which.max)] # sous forme de modalités
 
-  # In case we have expected Y
+  # In case we have an expected Y
   if (!is.null(y.exp)) {
 
     y.exp <- as.matrix(y.exp)
@@ -56,8 +56,8 @@ predict.plsda <- function(model, X, y.exp = NULL) {
 
     # Confusion Matrix
     total<-sum
-    mc <- addmargins(table(y.exp,y.hat), FUN=total, quiet=TRUE)
-    mc <- cbind(mc, pc.correct=diag(mc)/mc[,"total"]*100)
+    mc=addmargins(table(Y.quali,factor(Y.pred2,levels=colnames(Y))),FUN = total)
+    mc=cbind(mc,pc.correct=diag(mc)/mc[,"total"]*100)
 
     return(list(Y.hat = Y.hat,
                 y.hat = y.hat,
