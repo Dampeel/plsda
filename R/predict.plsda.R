@@ -17,8 +17,6 @@ predict.plsda <- function(model, X, y.exp = NULL) {
     stop("X must have the same number of columns than model")
   }
 
-  #TODO: tester vérifier que les colonnes du X correspondent bien au colonnes du modele
-
   # Setting data
   coeffs <- model$Coeffs
   X <- as.matrix(X)
@@ -27,37 +25,36 @@ predict.plsda <- function(model, X, y.exp = NULL) {
 
   # Prediction
   Y.hat <- X %*% B + Cte # sous forme d'indicatrices
-  #TODO: insérer le softmax ici pour obtenir les probabilités d'appartenance
 
-  y.hat = colnames(Y.hat)[apply(Y.hat, 1, which.max)] # sous forme de modalités
+  # SoftMax
+  Y.hat <- t(apply(Y.hat, 1, function(x) { exp(x) / sum(exp(x)) }))
+  y.hat <- colnames(Y.hat)[apply(Y.hat, 1, which.max)] # sous forme de modalités
 
   # In case we have an expected Y
   if (!is.null(y.exp)) {
 
-    y.exp <- as.matrix(y.exp)
+    Y.exp <- as.matrix(dummies::dummy(y.exp))
 
     # Controling data
-    if (any(is.na(y.exp))) {
+    if (any(is.na(Y.exp))) {
       stop("Y.exp cannot contain null values")
     }
 
-    if (ncol(y.exp) != 1 && !is.factor(y.exp)) {
+    if (ncol(Y.exp) != 1 && !is.factor(y.exp)) {
       stop("Y.exp must have only one column and must be a factor")
     }
 
-    if (nrow(y.exp) != nrow(X)) {
+    if (nrow(Y.exp) != nrow(X)) {
       stop("Y.exp and X must have the same amount of rows")
     }
-
-    Y.exp <- dummies::dummy(y.exp)
 
     # Residuals
     res <- Y.exp - Y.hat
 
     # Confusion Matrix
     total<-sum
-    mc=addmargins(table(Y.quali,factor(Y.pred2,levels=colnames(Y))),FUN = total)
-    mc=cbind(mc,pc.correct=diag(mc)/mc[,"total"]*100)
+    mc <- addmargins(table(y.exp, factor(y.hat, levels(y.exp))), FUN = total, quiet=TRUE)
+    mc <- cbind(mc, pc.correct=diag(mc)/mc[,"total"]*100)
 
     return(list(Y.hat = Y.hat,
                 y.hat = y.hat,

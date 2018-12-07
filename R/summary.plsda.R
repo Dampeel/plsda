@@ -9,4 +9,6 @@ summary.plsda <- function(model) {
   cat("\n")
   cat("VIP\n")
   print(model$VIP)
+  cat("\n")
+  cat("Beauquel Camille, Leal Hugo, Peelman Damien\n")
 }
