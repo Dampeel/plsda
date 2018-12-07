@@ -1,21 +1,21 @@
 plot.plsda <- function(model) {
 
   #Représentation graphique de la qualité
-  qualite <- model$Qualite
-  barplot(qualite,
+  quality <- model$Quality
+  barplot(quality,
           beside=TRUE,
           main="Model quality by #Comp",
           xlab="Component",
           ylab="Quality",
           col=c("orange","green4"),
           space=c(0.05,0.2),
-          legend=rownames(qualite))
+          legend=rownames(quality))
 
   #Représentation graphique VIP
   VIP <- model$VIP
-  for (h in 1:n) {
+  for (h in 1:ncol(VIP)) {
     barplot(VIP[,h],
-            names.arg=colnames(X),
+            names.arg=rownames(VIP),
             main=c(paste("VIP for component",h),"Confidence interval at 0.95%"),
             xlab="Variables",
             ylab="VIP",

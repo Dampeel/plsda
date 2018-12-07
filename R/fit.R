@@ -9,7 +9,7 @@
 #' @export
 #' @examples
 #' fit("test")
-fit <- function(formula, data, ncomp=2, cv = FALSE, nfold = 0, plot = FALSE) {
+fit <- function(formula, data, ncomp=2, cv = FALSE, nfold = 0) {
 
   #Reading the formula and setting X and Y
   if (!plyr::is.formula(formula)) {
@@ -30,9 +30,9 @@ fit <- function(formula, data, ncomp=2, cv = FALSE, nfold = 0, plot = FALSE) {
     stop("y must be a factor")
   }
 
-  #TOD0 : controller que y a une seule colonne
+  # TODO: controler que y a une seule colonne
 
-  #Controling data
+  # Controling data
   if (any(is.na(X)) || any(is.na(Y))) {
     stop("X and Y cannot contain null values")
   }
