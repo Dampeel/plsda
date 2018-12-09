@@ -24,16 +24,17 @@ predict.plsda <- function(model, X, y.exp = NULL) {
   Cte <- matrix(rep(coeffs[1,], each=nrow(X)), nrow(X), ncol(B))
 
   # Prediction
-  Y.hat <- X %*% B + Cte # sous forme d'indicatrices
+  Y.hat <- X %*% B + Cte
 
   # SoftMax
   Y.hat <- t(apply(Y.hat, 1, function(x) { exp(x) / sum(exp(x)) }))
-  y.hat <- colnames(Y.hat)[apply(Y.hat, 1, which.max)] # sous forme de modalités
+  y.hat <- colnames(Y.hat)[apply(Y.hat, 1, which.max)]
 
   # In case we have an expected Y
   if (!is.null(y.exp)) {
 
     Y.exp <- as.matrix(dummies::dummy(y.exp))
+    colnames(Y.exp) <- levels(y.exp)
 
     # Controling data
     if (any(is.na(Y.exp))) {
@@ -53,13 +54,17 @@ predict.plsda <- function(model, X, y.exp = NULL) {
 
     # Confusion Matrix
     total<-sum
-    mc <- addmargins(table(y.exp, factor(y.hat, levels(y.exp))), FUN = total, quiet=TRUE)
+    mc <- addmargins(table(y.exp, factor(y.hat, colnames(Y.exp))), FUN = total, quiet = TRUE)
     mc <- cbind(mc, pc.correct=diag(mc)/mc[,"total"]*100)
+
+    # Error rate
+    error <- round(1 - sum(diag(mc[,1:ncol(Y.exp)])) / sum(mc[ncol(Y.exp)+1, ncol(Y.exp)+1]), 2)
 
     return(list(Y.hat = Y.hat,
                 y.hat = y.hat,
                 Residuals = res,
-                Conf.Mat = mc))
+                Conf.Mat = mc,
+                Error = error))
   }
 
   # Else we just return the Y hat

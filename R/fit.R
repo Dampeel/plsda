@@ -57,20 +57,15 @@ fit <- function(formula, data, ncomp=2, cv = FALSE, nfold = 0) {
   # Launching PLS algorithm
   if (cv == "ext") {
     cv <- cross_validation(X, Y, ncomp, nfold)
-    n <- cv$N.Comp
-
-    print(cv)
+    nc <- cv$N.Comp
+    model <- pls(X, Y, nc, cv.int = FALSE, nfold)
   }
   else if (cv == "int") {
-    print("CV interne")
+    model <- pls(X, Y, ncomp, cv.int = TRUE, nfold)
   }
   else {
-    n <- ncomp
+    model <- pls(X, Y, ncomp, cv.int = FALSE, nfold)
   }
-
-  # Call to pls function
-  # TODO: Iterer pls en enlevant à chaque fois la variable < 0.8
-  model <- pls(X, Y, n)
 
   return(model)
 }

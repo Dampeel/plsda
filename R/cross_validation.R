@@ -8,10 +8,10 @@
 #' @export
 cross_validation <- function(X, Y, ncomp, nfold) {
 
-  PRESS_mean <- NULL
+  PRESS <- NULL
 
   for (n in 1:ncomp) {
-    PRESS <- NULL
+    press <- NULL
 
     # Leave one out
     if (nfold == 0) {
@@ -36,19 +36,19 @@ cross_validation <- function(X, Y, ncomp, nfold) {
       Xtest <- as.matrix(X[indexes,, drop=FALSE])
       Ytest <- as.matrix(Y[indexes,, drop=FALSE])
 
-      model <- pls(Xapp, Yapp, n)
+      model <- pls(Xapp, Yapp, n, cv.int = FALSE, nfold = 0)
       prediction <- predict.plsda(model, Xtest)
 
-      PRESS[i] <- sum((prediction$Y.hat - Ytest)^2)
+      press[i] <- sum((prediction$Y.hat - Ytest)^2)
     }
 
-    PRESS_mean[n] <- mean(PRESS)
+    PRESS[n] <- sum(press)
   }
 
-  ncomp <- which.min(PRESS_mean)
+  ncomp <- which.min(PRESS)
 
   #TODO: plot des PRESS
 
   return(list(N.Comp = ncomp,
-              PRESS = PRESS_mean))
+              PRESS = PRESS))
 }
