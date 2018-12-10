@@ -12,7 +12,7 @@ validation <- function(result, y.exp) {
     stop("y.exp must have only one column")
   }
 
-  # Extracting binary values from factor
+  # Extracting binary values Y.exp from factor y.exp
   Y.exp <- as.matrix(dummies::dummy(y.exp))
   colnames(Y.exp) <- levels(y.exp)
 
