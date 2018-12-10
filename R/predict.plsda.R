@@ -6,7 +6,7 @@
 #' @export
 #' @examples
 #' predict()
-predict.plsda <- function(model, X, y.exp = NULL) {
+predict.plsda <- function(model, X) {
 
   # Controling data
   if (any(is.na(X))) {
@@ -30,46 +30,5 @@ predict.plsda <- function(model, X, y.exp = NULL) {
   Y.hat <- t(apply(Y.hat, 1, function(x) { exp(x) / sum(exp(x)) }))
   y.hat <- colnames(Y.hat)[apply(Y.hat, 1, which.max)]
 
-  # In case we have an expected Y
-  if (!is.null(y.exp)) {
-
-    Y.exp <- as.matrix(dummies::dummy(y.exp))
-    colnames(Y.exp) <- levels(y.exp)
-
-    # Controling data
-    if (any(is.na(Y.exp))) {
-      stop("Y.exp cannot contain null values")
-    }
-
-    if (ncol(Y.exp) != 1 && !is.factor(y.exp)) {
-      stop("Y.exp must have only one column and must be a factor")
-    }
-
-    if (nrow(Y.exp) != nrow(X)) {
-      stop("Y.exp and X must have the same amount of rows")
-    }
-
-    # Residuals
-    res <- Y.exp - Y.hat
-
-    # Confusion Matrix
-    total<-sum
-    mc <- addmargins(table(y.exp, factor(y.hat, colnames(Y.exp))), FUN = total, quiet = TRUE)
-    mc <- cbind(mc, pc.correct=diag(mc)/mc[,"total"]*100)
-
-    # Error rate
-    error <- round(1 - sum(diag(mc[,1:ncol(Y.exp)])) / sum(mc[ncol(Y.exp)+1, ncol(Y.exp)+1]), 2)
-
-    return(list(Y.hat = Y.hat,
-                y.hat = y.hat,
-                Residuals = res,
-                Conf.Mat = mc,
-                Error = error))
-  }
-
-  # Else we just return the Y hat
-  else {
-    return(list(Y.hat = Y.hat,
-                y.hat = y.hat))
-  }
+  return(list(Y.hat = Y.hat, y.hat = y.hat))
 }

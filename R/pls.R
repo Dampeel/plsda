@@ -141,8 +141,8 @@ pls <- function(X, Y, nc, cv.int, nfold) {
       PRESS[h] <- sum(press.cv)
 
       if (h > 1) {
-        Q2[h] <- 1 - PRESS[h]/RESS[h-1]
-        if (Q2[h] < 0.01) {
+        Q2[h] <- 1 - (PRESS[h]/RESS[h-1])
+        if (Q2[h] < 0.1) {
           break
         }
       }
@@ -176,7 +176,6 @@ pls <- function(X, Y, nc, cv.int, nfold) {
 
     # Evaluation
     Y.hat <- X.init %*% Br + matrix(rep(Ct, each=nrow(X.init)), nrow(X.init), ncol(Br))
-
     RESS[h] <- sum((Y.hat - Y.init)^2)
 
     h <- h + 1
@@ -192,14 +191,14 @@ pls <- function(X, Y, nc, cv.int, nfold) {
   }
 
   # Final matrix of the coefficients
-  coeffs=rbind(Constant=Ct,Br)
+  coeffs=rbind(Constant=Ct, Br)
 
   # Cross validation results
   CV <- NULL
   if (cv.int) {
     q2cum <- NULL
     for (j in 1:nc) {
-      q2cum[j] <- prod(PRESS[1:j]) / prod(RESS[1:j])
+      q2cum[j] <- prod(PRESS[1:j]/RESS[1:j])
     }
     Q2cum <- 1 - q2cum
     CV <- cbind(PRESS[1:nc], RESS[1:nc], Q2[1:nc], rep(0.1, nc), Q2cum)
