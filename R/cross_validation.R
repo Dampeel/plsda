@@ -47,8 +47,6 @@ cross_validation <- function(X, Y, ncomp, nfold) {
 
   ncomp <- which.min(PRESS)
 
-  #TODO: plot des PRESS
-
   return(list(N.Comp = ncomp,
               PRESS = PRESS))
 }

@@ -4,12 +4,14 @@
 #' @param modality (The column to fit)
 #' @param ncomp (The number of components)
 #' @param cv (If TRUE the package will compute the ncomp with a cross validation)
-#' @param plot (If TRUE the package swill display VIP and Quality plots)
-#' @keywords fit, pls, plsda
+#' @keywords fit, pls, pls-da
 #' @export
 #' @examples
-#' fit("test")
-fit <- function(formula, data, ncomp=2, cv = FALSE, nfold = 0) {
+#' fit(Species ~ ., data = iris)
+#' fit(Species ~ ., data = iris, 2)
+#' fit(Species ~ ., data = iris, 4, cv = "ext", nfold = 30)
+#' fit(Species ~ ., data = iris, 4, cv = "int", nfold = 10)
+fit <- function(formula, data, ncomp = 2, cv = FALSE, nfold = 0) {
 
   #Reading the formula and setting X and Y
   if (!plyr::is.formula(formula)) {
@@ -17,9 +19,8 @@ fit <- function(formula, data, ncomp=2, cv = FALSE, nfold = 0) {
   }
 
   # Reading the X
-  X <- model.matrix(update(formula, ~ . -1), data = data)
-
-  # TODO: transformer les factor éventuels en indicatrices
+  X <- model.matrix(formula, data = data)
+  X <- X[,-1] # Removing intercept
 
   # Reading the Y
   y <- model.response(model.frame(formula, data))
@@ -29,8 +30,6 @@ fit <- function(formula, data, ncomp=2, cv = FALSE, nfold = 0) {
   } else {
     stop("y must be a factor")
   }
-
-  # TODO: controler que y a une seule colonne
 
   # Controling data
   if (any(is.na(X)) || any(is.na(Y))) {
@@ -57,14 +56,14 @@ fit <- function(formula, data, ncomp=2, cv = FALSE, nfold = 0) {
   # Launching PLS algorithm
   if (cv == "ext") {
     cv <- cross_validation(X, Y, ncomp, nfold)
-    nc <- cv$N.Comp
-    model <- pls(X, Y, nc, cv.int = FALSE, nfold)
+    model <- pls(X, Y, cv$N.Comp, cv.int = FALSE, nfold)
+    model$CV <- cv$PRESS
   }
   else if (cv == "int") {
     model <- pls(X, Y, ncomp, cv.int = TRUE, nfold)
   }
   else {
-    model <- pls(X, Y, ncomp, cv.int = FALSE, nfold)
+    model <- pls(X, Y, ncomp, cv.int = FALSE)
   }
 
   return(model)
