@@ -1,3 +1,17 @@
+#' Fonction validation
+#'
+#' @description This function takes a plsda-pred, a prediction computed by the predict function of the plsda package and compare it to the y.exp vector provide.
+#'     It will returns the residuals, the confusion matrix and the error rate.
+#' @param result The result obtained with the predict.plsda of this package, must contains y.hat and Y.hat as a list.
+#' @param y.exp The expected y, it will be confronted to y.hat found in the result parameter, so it must have the same number of items/
+#' @return A plsda-valid object that contains residuals, confusion matrix and error rate.
+#' @keywords confusion matrix, residuals, predict, pls, plsda
+#' @export
+#' @importFrom stats addmargins
+#' @examples
+#' model <- fit(Species ~ ., data = iris)
+#' result <- predict(model, iris[,1:4])
+#' validation(result, iris[,5])
 validation <- function(result, y.exp) {
 
   y.hat <- result$y.hat
@@ -36,7 +50,10 @@ validation <- function(result, y.exp) {
   # Error rate
   error <- round(1 - sum(diag(mc[,1:ncol(Y.exp)])) / sum(mc[ncol(Y.exp)+1, ncol(Y.exp)+1]), 2)
 
-  return(list(Residuals = resid,
-              Conf.Mat = mc,
-              Error = error))
+  result <- structure(list(
+    Residuals = resid,
+    Conf.Mat = mc,
+    Error = error))
+  class(result) <- "plsda-valid"
+  return(result)
 }

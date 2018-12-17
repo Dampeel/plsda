@@ -21,14 +21,27 @@ pls_algo <- function(W, P, Q, A, M, C, h) {
   Q[,h] <- q
 
   # Update of the first variables
-  A <- A - (c*p%*%t(q))
-  M <- M - (c*p%*%t(p))
-  C <- C - (w%*%t(p))
+  A <- A - (c * p %*% t(q))
+  M <- M - (c * p %*% t(p))
+  C <- C - (w %*% t(p))
 
   return(list(W=W, P=P, Q=Q, A=A, M=M, C=C))
 }
 
-pls <- function(X, Y, nc, cv.int, nfold) {
+#' Fonction pls
+#'
+#' @description Generate a plsda model according to formula and data provided. This model can be cross-validated.
+#' @param X The predictors must be a set of quantitative variables.
+#' @param Y The response must be a qualitative variable.
+#' @param nc The number of component to compute. If cross-validation is activated it will be used as the maximum number of component to return.
+#' @param cv If TRUE a cross-validation will be done. Default is FALSE.
+#' @param nfold If cv parameter is TRUE, nfold will specify the kind of cross-validation. Default is 0.
+#'     A value of 0 will be equivalent to a "Leave One Out" cross-validation. If > 0 it will do a k-fold cross-validation with k = nfold.
+#' @return A plsda object that contains the component matrix, the trained model as coefficients, the explained variance on X and Y, VIP values, quality of the model and cross-validation results if asked
+#' @keywords fit, pls, plsda
+#' @export
+#' @importFrom stats cor sd
+pls <- function(X, Y, nc, cv, nfold) {
 
   X.init <- as.matrix(X)
   Y.init <- as.matrix(Y)
@@ -55,13 +68,13 @@ pls <- function(X, Y, nc, cv.int, nfold) {
   C <- diag(nrow(A))
 
   # Initializing Cross Validation
-  if (cv.int) {
+  if (cv) {
 
     RESS <- NULL
     PRESS <- NULL
     Q2 <- NULL
 
-    # Leave one out if nfold = 0
+    # Leave one out if nfold is 0
     if (nfold == 0) {
       nfold <- nrow(X)
     }
@@ -117,7 +130,7 @@ pls <- function(X, Y, nc, cv.int, nfold) {
   for (h in 1:nc) {
 
     # Cross validation
-    if (cv.int) {
+    if (cv) {
 
       # Evaluation of previous run
       Y.hat <- X %*% (W %*% t(Q))
@@ -162,7 +175,7 @@ pls <- function(X, Y, nc, cv.int, nfold) {
   }
 
   # If Cross Validation, adaptation of results to the real number of components
-  if (cv.int) {
+  if (cv) {
     nc <- h - 1
     W <- W[, 1:nc, drop=FALSE]
     P <- P[, 1:nc, drop=FALSE]
@@ -188,12 +201,12 @@ pls <- function(X, Y, nc, cv.int, nfold) {
 
   # Cross validation results
   CV <- NULL
-  if (cv.int) {
+  if (cv) {
     CV <- cbind(PRESS[1:nc], RESS[1:nc], Q2[1:nc])
     colnames(CV) <- c("PRESS", "RESS", "Q2")
   }
 
-  # Detail of R² and redundancy
+  # Detail of R2 and redundancy
   # For X (not cumulative and cumulative)
   Rx <- cor(X.init,Th)^2
   colnames(Rx) <- paste(rep("Comp",nc), 1:nc, sep=" ")
@@ -222,7 +235,7 @@ pls <- function(X, Y, nc, cv.int, nfold) {
 
   # Quality of the overall model
   quality <- rbind(Var.Explained.X.Cum[nrow(Var.Explained.X.Cum),], Var.Explained.Y.Cum[nrow(Var.Explained.Y.Cum),])
-  rownames(quality) <- c("R²Xcum","R²Ycum")
+  rownames(quality) <- c("R2Xcum","R2Ycum")
 
   # Variable Importance in the Projection (VIP)
   VIP <- matrix(0,ncol(X.init), nc)
@@ -234,7 +247,7 @@ pls <- function(X, Y, nc, cv.int, nfold) {
   dimnames(VIP) <- list(namesX, paste(rep("Comp", nc), 1:nc, sep=" "))
 
   # Variables returned
-  result <- list(Comp.Matrix = Th,
+  result <- structure(list(Comp.Matrix = Th,
               Coeffs = coeffs,
               Var.Explained.X = Var.Explained.X,
               Var.Explained.X.Cum = Var.Explained.X.Cum,
@@ -242,7 +255,7 @@ pls <- function(X, Y, nc, cv.int, nfold) {
               Var.Explained.Y.Cum = Var.Explained.Y.Cum,
               Quality = quality,
               VIP = VIP,
-              CV = CV)
+              CV = CV))
   class(result) <- "plsda"
   return(result)
 }

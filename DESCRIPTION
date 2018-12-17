@@ -1,13 +1,15 @@
 Package: plsda
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Title: PLS algorithm used for discriminant analysis
+Version: 0.2.0
+Author: Camille Beauquel [aut, cre],
+  Hugo Leal [aut, cre],
+  Damien Peelman [aut, cre]
+Maintainer: Damien Peelman <dampeel2000@yahoo.fr>
+Description: This package provide an help to compute discriminant analysis based on Partial Least Square (PLS) algorithm.
+    It implement a PLSA algorithm and apply it to a quantitative set of predicators (X) and binarized qualitative respeonse (y).
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Imports: plyr, dummies
+Imports: plyr, dummies, graphics, stats, corrplot
 RoxygenNote: 6.1.0.9000

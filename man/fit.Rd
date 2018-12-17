@@ -4,24 +4,37 @@
 \alias{fit}
 \title{Fonction fit}
 \usage{
-fit(formula, data, ncomp = 2, cv = FALSE, nfold = 0, plot = FALSE)
+fit(formula, data, ncomp = 2, cv = FALSE, nfold = 0, vs = FALSE,
+  vs_crit = 1)
 }
 \arguments{
-\item{data}{(The dataset to analyse)}
+\item{formula}{A valid statistical R formula.}
 
-\item{ncomp}{(The number of components)}
+\item{data}{The data to be used to rain the PLS-DA model. I must fit to the formula.
+The response must be a qualitative variable. The predictors must be a set of quantitative variables.}
 
-\item{cv}{(If TRUE the package will compute the ncomp with a cross validation)}
+\item{ncomp}{The number of component to compute. If cross-validation is activated it will be used as the maximum number of component to return.}
 
-\item{plot}{(If TRUE the package swill display VIP and Quality plots)}
+\item{cv}{If TRUE a cross-validation will be done. Default is FALSE.}
 
-\item{modality}{(The column to fit)}
+\item{nfold}{If cv parameter is TRUE, nfold will specify the kind of cross-validation. Default is 0.
+A value of 0 will be equivalent to a "Leave One Out" cross-validation. If > 0 it will do a k-fold cross-validation with k = nfold.}
+
+\item{vs}{If TRUE an automatic variable selection will be done. Default is FALSE.}
+
+\item{vs_crit}{Treshold value for the variables selection (vs=TRUE). Default value : 1 (fit fonction)}
+}
+\value{
+A plsda object that contains the component matrix, the trained model as coefficients, the explained variance on X and Y, VIP values, quality of the model and cross-validation results if asked
 }
 \description{
-Fonction fit
+Generate a plsda model according to formula and data provided. This model can be cross-validated.
 }
 \examples{
-fit("test")
+fit(Species ~ ., data = iris)
+fit(Species ~ ., data = iris, 2)
+fit(Species ~ ., data = iris, vs = TRUE)
+fit(Species ~ ., data = iris, 4, cv = TRUE, nfold = 10)
 }
 \keyword{fit,}
 \keyword{pls,}

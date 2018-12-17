@@ -2,21 +2,28 @@
 % Please edit documentation in R/predict.plsda.R
 \name{predict.plsda}
 \alias{predict.plsda}
-\title{Fonction predict}
+\title{Fonction predict.plsda}
 \usage{
-\method{predict}{plsda}(model, X, y.exp = NULL)
+\method{predict}{plsda}(object, X, ...)
 }
 \arguments{
-\item{model}{(The model to use)}
+\item{object}{A plsda object containing a trained model. The model can be generated with the fit function of this package.}
 
-\item{newdata}{(The test data)}
+\item{X}{The set of predictor that will be used to compute prediction. It mus fit the predictors used to train the model.}
+
+\item{...}{Use to comply generic model}
+}
+\value{
+A plsda-pred object containing prediction. This object contains y.hat, a qualitative prediction and Y.hat, a binarized prediction.
 }
 \description{
-Fonction predict
+This function takes a plsda model and a set of predictors fitting to this model and will return a plsda-prev object containing the predicted values.
 }
 \examples{
-predict()
+model <- fit(Species ~ ., data = iris)
+predict(model, iris[,1:4])
 }
 \keyword{fit,}
 \keyword{pls,}
 \keyword{plsda}
+\keyword{predict,}
